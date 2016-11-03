@@ -235,6 +235,9 @@ class GenerateShippingLabel(Wizard):
         if not shipment.packages:
             shipment._create_default_package(self.start.box_type)
 
+        if shipment.delivery_address.country != shipment.warehouse.address.country:
+            shipment._create_customs_items()
+
         default_values = self.default_start({})
         per_package_weight = None
         if self.start.override_weight and \

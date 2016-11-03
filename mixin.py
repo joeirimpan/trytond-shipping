@@ -240,6 +240,21 @@ class ShipmentCarrierMixin(PackageMixin):
         }])
         return package
 
+    def _create_customs_items(self):
+        CustomsItem = Pool().get('shipment.customs_item')
+        for move in self.moves:
+            customs_item = CustomsItem()
+            customs_item.shipment = self
+            customs_item.description = move.product.customs_description_used
+            customs_item.quantity = move.quantity
+            customs_item.uom = move.uom
+            customs_item.value = move.product.customs_value_used
+            customs_item.currency = move.currency
+            customs_item.weight = move.product.weight
+            customs_item.weight_uom = move.product.weight_uom
+            customs_item.country_of_origin = move.product.country_of_origin
+            customs_item.save()
+
     def get_shipping_rates(self, carriers=None, silent=False):
         """
         Gives a list of rates from carriers provided. If no carriers provided,
