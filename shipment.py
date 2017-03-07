@@ -252,7 +252,7 @@ class GenerateShippingLabel(Wizard):
             package.save()
 
         # Fetch rates, and fill selection field with result list
-        rates = self.shipment.get_shipping_rate(
+        rates, _ = self.shipment.get_shipping_rate(
             self.start.carrier, self.start.carrier_service
         )
         result = []

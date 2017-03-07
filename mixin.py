@@ -255,6 +255,7 @@ class ShipmentCarrierMixin(PackageMixin):
                     'carrier': carrier active record,
                 }..
             ]
+            :return: ([rate_obj, ...], )
         """
         Carrier = Pool().get('carrier')
 
@@ -262,9 +263,14 @@ class ShipmentCarrierMixin(PackageMixin):
             carriers = Carrier.search([])
 
         rates = []
+        errors = []
         for carrier in carriers:
-            rates.extend(self.get_shipping_rate(carrier, silent))
-        return rates
+            carrier_rates, carrier_errors = self.get_shipping_rate(
+                carrier, silent=silent
+            )
+            rates.extend(carrier_rates)
+            errors.extend(carrier_errors)
+        return rates, errors
 
     def get_shipping_rate(self, carrier, carrier_service=None, silent=False):
         """
@@ -280,6 +286,7 @@ class ShipmentCarrierMixin(PackageMixin):
                     'carrier': carrier active record,
                 }..
             ]
+            :return: ([rate_obj, ...], )
         """
         Company = Pool().get('company.company')
 
@@ -292,9 +299,9 @@ class ShipmentCarrierMixin(PackageMixin):
                 'cost_currency': currency,
                 'carrier': carrier,
             }
-            return [rate_dict]
+            return [rate_dict], []
 
-        return []
+        return [], []
 
     def apply_shipping_rate(self, rate):
         """
